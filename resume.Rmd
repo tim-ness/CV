@@ -1,0 +1,155 @@
+---
+title: Tim Ness' Resume"
+author: Tim Ness
+date: "`r Sys.Date()`"
+output:
+  pagedown::html_resume:
+    css: ['css/custom_resume.css', 'css/styles.css', 'resume']
+    # set it to true for a self-contained HTML page but it'll take longer to render
+    self_contained: no
+---
+
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  results='asis', 
+  echo = FALSE
+)
+library(tidyverse)
+library(glue)
+
+# Set this to true to have links turned into footnotes at the end of the document
+PDF_EXPORT <- FALSE
+
+# Holds all the links that were inserted for placement at the end
+links <- c()
+
+source('parsing_functions.R')
+
+
+# First let's get the data, filtering to only the items tagged as
+# Resume items
+position_data <- read_csv('positions.csv') %>% 
+  filter(in_resume) %>% 
+  mutate(
+    # Build some custom sections by collapsing others
+    section = case_when(
+      section %in% c('research_positions', 'industry_positions') ~ 'positions', 
+      section %in% c('data_science_writings', 'by_me_press') ~ 'writings',
+      TRUE ~ section
+    )
+  ) 
+
+```
+
+
+Aside
+================================================================================
+
+
+![logo](beta_dist.png){width=100%}
+
+Contact {#contact}
+--------------------------------------------------------------------------------
+
+
+
+- <i class="fa fa-envelope"></i> timothy.ness@gmail.com
+- <i class="fa fa-github"></i> github.com/tim-ness
+- <i class="fa fa-link"></i> [timothyness.com](http://timothyness.com)
+- <i class="fa fa-phone"></i> (602) 334-6128
+
+
+
+Language Skills {#skills}
+--------------------------------------------------------------------------------
+
+
+```{r}
+skills <- tribble(
+  ~skill,               ~level,
+  "R",                  1,
+  "Javascript (d3.js)", 0,
+  "Python",             0,
+  "Bash",               0,
+  "SQL",                0,
+  "C++",                0,
+  "AWK",                0
+)
+build_skill_bars(skills)
+```
+
+
+
+Open Source Contributions {#open-source}
+--------------------------------------------------------------------------------
+
+All projects available at `github.com/tim-ness/<name>`
+
+
+- `shinysense`: R package to use sensor data in Shiny apps
+- `tuftesque`: Hugo theme (behind LiveFreeOrDichotomize.com)
+- `slid3r`: D3 add-on for fully svg slider inputs
+
+
+More info {#more-info}
+--------------------------------------------------------------------------------
+
+See full CV at timothyness.com/notreally for more complete list of positions and publications.
+
+
+Disclaimer {#disclaimer}
+--------------------------------------------------------------------------------
+
+Made w/ [**pagedown**](https://github.com/rstudio/pagedown). 
+
+Source code: [github.com/nstrayer/cv](https://github.com/nstrayer/cv).
+
+Last updated on `r Sys.Date()`.
+
+
+
+
+Main
+================================================================================
+
+Tim Ness {#title}
+--------------------------------------------------------------------------------
+
+```{r}
+intro_text <- "I have a diverse background including research, project management, education, music performance, and sustainability.
+
+Throughout, I've learned to create narratives and deliver concise, understandable messages. 
+"
+
+
+cat(sanitize_links(intro_text))
+```
+
+
+
+Education {data-icon=graduation-cap data-concise=true}
+--------------------------------------------------------------------------------
+
+```{r}
+position_data %>% print_section('education')
+```
+
+
+
+Selected Positions {data-icon=suitcase}
+--------------------------------------------------------------------------------
+
+```{r}
+position_data %>% print_section('positions')
+```
+
+Selected Writing {data-icon=newspaper}
+--------------------------------------------------------------------------------
+
+
+```{r}
+position_data %>% print_section('writings')
+```
+
+
